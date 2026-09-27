@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Farm Rover — Field Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #1a1712;
+    --surface: #24201a;
+    --surface-2: #2c271f;
+    --border: #3a342b;
+    --text: #f2ece0;
+    --text-muted: #a99c87;
+    --amber: #d9a441;
+    --sage: #8ca37c;
+    --coral: #c4664b;
+    --alert: #e0574a;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    min-height: 100vh;
+    padding: 28px;
+  }
+
+  .wrap { max-width: 1180px; margin: 0 auto; }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 22px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .title-block h1 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    margin: 0;
+  }
+
+  .title-block .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+
+  .status-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--sage);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 7px 14px;
+    border-radius: 100px;
+    transition: color 0.3s, border-color 0.3s;
+  }
+
+  .status-pill.stale { color: var(--amber); border-color: var(--amber); }
+  .status-pill.offline { color: var(--alert); border-color: var(--alert); }
+
+  .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(140,163,124,0.5); }
+    70%  { box-shadow: 0 0 0 7px rgba(140,163,124,0); }
+    100% { box-shadow: 0 0 0 0 rgba(140,163,124,0); }
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 18px;
+  }
+
+  @media (max-width: 860px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+
+  .video-panel {
+    position: relative;
+    background: #000;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+  }
+
+  .video-panel img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .video-label {
+    position: absolute;
+    top: 14px; left: 14px;
+    display: flex; align-items: center; gap: 7px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: #fff;
+    background: rgba(0,0,0,0.55);
+    padding: 5px 10px;
+    border-radius: 5px;
+  }
+
+  .video-label .rec-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--alert);
+    animation: pulse 1.4s infinite;
+  }
+
+  .bracket {
+    position: absolute;
+    width: 22px; height: 22px;
+    border-color: rgba(242,236,224,0.55);
+    border-style: solid;
+    border-width: 0;
+  }
+  .bracket.tl { top: 12px; left: 12px; border-top-width: 2px; border-left-width: 2px; }
+  .bracket.tr { top: 12px; right: 12px; border-top-width: 2px; border-right-width: 2px; }
+  .bracket.bl { bottom: 12px; left: 12px; border-bottom-width: 2px; border-left-width: 2px; }
+  .bracket.br { bottom: 12px; right: 12px; border-bottom-width: 2px; border-right-width: 2px; }
+
+  .side-col { display: flex; flex-direction: column; gap: 12px; }
+
+  .cards-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    transition: border-color 0.3s, opacity 0.3s;
+  }
+
+  .card.card-stale { border-color: var(--amber); opacity: 0.75; }
+  .card.card-offline { border-color: var(--alert); opacity: 0.6; }
+
+  .card .label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .card .value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .card .unit {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 400;
+    margin-left: 2px;
+  }
+
+  .card.temp .value { color: var(--coral); }
+  .card.humidity .value { color: var(--sage); }
+  .card.soil .value { color: var(--amber); }
+  .card.gas .value { color: var(--alert); }
+
+  .advisory-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+  }
+
+  .advisory-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--text-muted);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+
+  .advisory-item p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text);
+  }
+
+  .advisory-item.irrigate { border-left-color: var(--sage); }
+  .advisory-item.hold { border-left-color: var(--amber); }
+  .advisory-item.alert { border-left-color: var(--alert); }
+  .advisory-item.normal { border-left-color: var(--sage); }
+  .advisory-item.info { border-left-color: var(--text-muted); }
+
+  .footer-strip {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 16px;
+    align-items: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+  }
+
+  .capture-thumb {
+    width: 64px; height: 48px;
+    border-radius: 6px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    object-fit: cover;
+  }
+
+  .footer-text .label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  .footer-text .value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--text);
+  }
+
+  .meta-line {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: right;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="title-block">
+      <div class="eyebrow">Qualcomm ID26180 — SIH 2026</div>
+      <h1>Smart Farm Rover — Field Console</h1>
+    </div>
+    <div class="status-pill" id="status-pill"><span class="dot"></span> <span id="status-text">Telemetry live</span></div>
+  </header>
+
+  <div class="grid">
+    <div class="video-panel">
+      <img id="video-feed" src="{{ cam_stream_url }}" alt="Live rover camera feed">
+      <div class="video-label"><span class="rec-dot"></span> LIVE FEED — ESP32-CAM</div>
+      <div class="bracket tl"></div>
+      <div class="bracket tr"></div>
+      <div class="bracket bl"></div>
+      <div class="bracket br"></div>
+    </div>
+
+    <div class="side-col">
+      <div class="cards-row">
+        <div class="card temp" id="card-temp">
+          <div class="label">Temperature</div>
+          <div class="value" id="temp-value">--<span class="unit">°C</span></div>
+        </div>
+        <div class="card humidity" id="card-humidity">
+          <div class="label">Humidity</div>
+          <div class="value" id="humidity-value">--<span class="unit">%</span></div>
+        </div>
+        <div class="card soil" id="card-soil">
+          <div class="label">Soil Moisture</div>
+          <div class="value" id="soil-value">--<span class="unit">%</span></div>
+        </div>
+        <div class="card gas" id="card-gas">
+          <div class="label">Gas Index</div>
+          <div class="value" id="gas-value">--<span class="unit">%</span></div>
+        </div>
+      </div>
+
+      <div class="advisory-list" id="advisory-list">
+        <div class="advisory-item info"><p>Waiting for first reading...</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-strip">
+    <img class="capture-thumb" id="capture-thumb" src="" alt="Last capture" style="display:none;">
+    <div class="footer-text">
+      <div class="label">Last Manual Capture</div>
+      <div class="value" id="capture-status">No captures yet — press R2 / C on the controller</div>
+    </div>
+    <div class="meta-line" id="updated-line">Waiting for sensor data...</div>
+  </div>
+
+</div>
+
+<script>
+  const SENSOR_CARD_IDS = ['card-temp', 'card-humidity', 'card-soil', 'card-gas'];
+
+  async function pollSensors() {
+    try {
+      const res = await fetch('/api/sensors');
+      const data = await res.json();
+
+      document.getElementById('temp-value').innerHTML =
+        (data.temp !== null ? data.temp.toFixed(1) : '--') + '<span class="unit">°C</span>';
+      document.getElementById('humidity-value').innerHTML =
+        (data.humidity !== null ? data.humidity.toFixed(0) : '--') + '<span class="unit">%</span>';
+      document.getElementById('soil-value').innerHTML =
+        (data.soil_percent !== null ? data.soil_percent : '--') + '<span class="unit">%</span>';
+      document.getElementById('gas-value').innerHTML =
+        (data.air_quality_index !== null ? data.air_quality_index : '--') + '<span class="unit">%</span>';
+
+      const list = document.getElementById('advisory-list');
+      list.innerHTML = '';
+      (data.flags || []).forEach(flag => {
+        const item = document.createElement('div');
+        item.className = 'advisory-item ' + flag.type;
+        item.innerHTML = `<p>${flag.text}</p>`;
+        list.appendChild(item);
+      });
+
+      const sourceTag = data.source === 'manual' ? ' — manual (L2/X)' : data.source === 'auto' ? ' — auto' : '';
+      document.getElementById('updated-line').textContent =
+        data.updated_at ? `Updated ${data.updated_at}${sourceTag}` : 'Waiting for sensor data...';
+
+      // Connection health: reflect on the header pill and every sensor card
+      const pill = document.getElementById('status-pill');
+      const statusText = document.getElementById('status-text');
+      pill.classList.remove('stale', 'offline');
+      SENSOR_CARD_IDS.forEach(id => document.getElementById(id).classList.remove('card-stale', 'card-offline'));
+
+      if (data.connection_status === 'stale') {
+        pill.classList.add('stale');
+        statusText.textContent = 'Sensor link stale';
+        SENSOR_CARD_IDS.forEach(id => document.getElementById(id).classList.add('card-stale'));
+      } else if (data.connection_status === 'offline') {
+        pill.classList.add('offline');
+        statusText.textContent = 'Sensor link OFFLINE';
+        SENSOR_CARD_IDS.forEach(id => document.getElementById(id).classList.add('card-offline'));
+      } else {
+        statusText.textContent = 'Telemetry live';
+      }
+    } catch (e) {
+      document.getElementById('updated-line').textContent = 'Connection lost — check laptop / Flask app';
+    }
+  }
+
+  async function pollCapture() {
+    try {
+      const res = await fetch('/api/last-capture');
+      const data = await res.json();
+      if (data.filename) {
+        const thumb = document.getElementById('capture-thumb');
+        thumb.src = '/captures/' + data.filename + '?t=' + Date.now();
+        thumb.style.display = 'block';
+        document.getElementById('capture-status').textContent =
+          data.filename + ' — captured ' + data.timestamp;
+      }
+    } catch (e) { /* silent - non-critical panel */ }
+  }
+
+  pollSensors();
+  pollCapture();
+  setInterval(() => { pollSensors(); pollCapture(); }, 10000);
+
+  // ---------- Video: native ESP32-CAM stream, with auto-reconnect on error ----------
+  // The ESP32-CAM's own /stream endpoint is purpose-built for continuous low-latency
+  // delivery (this is the standard, well-proven pattern for this exact hardware), so
+  // unlike the phone-based feed in earlier versions, we use it directly rather than
+  // polling single frames. If the stream drops (Wi-Fi hiccup, board reset), reload it
+  // automatically instead of leaving a frozen/broken image on screen.
+  const videoImg = document.getElementById('video-feed');
+  const STREAM_URL = "{{ cam_stream_url }}";
+
+  videoImg.addEventListener('error', () => {
+    setTimeout(() => { videoImg.src = STREAM_URL + '?retry=' + Date.now(); }, 1500);
+  });
+</script>
+</body>
+</html>

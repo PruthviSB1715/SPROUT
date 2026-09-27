@@ -1,0 +1,23 @@
+{
+    "model_name": "MultiCrop Disease AI v1",
+    "architecture": "MobileNetV2",
+    "image_size": [
+        224,
+        224
+    ],
+    "num_classes": 27,
+    "batch_size": 32,
+    "epochs_requested": 15,
+    "seed": 42,
+    "test_accuracy": 0.9281709790229797,
+    "test_loss": 0.23078560829162598,
+    "dataset": "PlantVillage selected multicrop dataset",
+    "crops": [
+        "Apple",
+        "Corn",
+        "Grape",
+        "Pepper",
+        "Potato",
+        "Tomato"
+    ]
+}

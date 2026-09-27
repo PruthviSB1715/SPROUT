@@ -1,0 +1,519 @@
+<!DOCTYPE html><html lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Smart Farm Rover AI - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#7f2448",
+                        "surface-variant": "#e0e4da",
+                        "primary-fixed-dim": "#88d982",
+                        "on-primary-container": "#cbffc2",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#88d982",
+                        "on-surface": "#181d17",
+                        "secondary-fixed": "#ffdbcf",
+                        "error": "#ba1a1a",
+                        "tertiary": "#923357",
+                        "inverse-surface": "#2d322b",
+                        "tertiary-container": "#b14b6f",
+                        "on-secondary-container": "#795548",
+                        "surface-bright": "#f7fbf0",
+                        "on-background": "#181d17",
+                        "on-primary-fixed-variant": "#005312",
+                        "on-primary-fixed": "#002204",
+                        "on-surface-variant": "#40493d",
+                        "surface-container-high": "#e5eadf",
+                        "primary-fixed": "#a3f69c",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed-dim": "#ebbcac",
+                        "surface": "#f7fbf0",
+                        "tertiary-fixed-dim": "#ffb1c7",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#d7dbd2",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f1f5eb",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#fdcdbc",
+                        "tertiary-fixed": "#ffd9e2",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#eef2e8",
+                        "on-secondary-fixed-variant": "#603f33",
+                        "background": "#f7fbf0",
+                        "secondary": "#7a5649",
+                        "primary": "#0d631b",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#bfcaba",
+                        "on-tertiary-container": "#ffedf0",
+                        "on-secondary-fixed": "#2e150b",
+                        "outline": "#707a6c",
+                        "surface-container-highest": "#e0e4da",
+                        "on-tertiary-fixed": "#3f001c",
+                        "primary-container": "#2e7d32",
+                        "surface-container": "#ebefe5",
+                        "surface-tint": "#1b6d24"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "xl": "32px",
+                        "gutter": "16px",
+                        "sm": "8px",
+                        "container-margin": "24px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "base": "4px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "display-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f7fbf0; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24; }
+        .material-symbols-outlined.filled { font-variation-settings: 'FILL' 1; }
+        
+        /* Ambient shadows */
+        .card-shadow { box-shadow: 0px 2px 8px rgba(0,0,0,0.05); }
+        .overlay-shadow { box-shadow: 0px 8px 24px rgba(0,0,0,0.12); }
+        
+        /* Status Badges */
+        .badge-normal { background-color: rgba(13, 99, 27, 0.1); color: #0d631b; }
+        .badge-warning { background-color: rgba(245, 158, 11, 0.1); color: #d97706; }
+        .badge-critical { background-color: rgba(186, 26, 26, 0.1); color: #ba1a1a; }
+    </style>
+</head>
+<body class="bg-background text-on-background flex h-screen overflow-hidden antialiased">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col bg-surface-container-highest dark:bg-inverse-surface text-primary dark:text-primary-fixed-dim docked left-0 h-full w-64 border-r border-outline-variant dark:border-outline shrink-0 transition-all z-20">
+<div class="p-gutter border-b border-outline-variant dark:border-outline">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined" style="font-size: 18px;">precision_manufacturing</span>
+</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-on-surface dark:text-inverse-on-surface">Smart Farm AI</h1>
+<p class="font-label-md text-label-md text-on-surface-variant dark:text-surface-variant opacity-80">Precision Agriculture Platform</p>
+</div>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto py-sm">
+<ul class="flex flex-col gap-xs px-sm">
+<!-- Dashboard (Active) -->
+<li class="">
+<a class="flex items-center gap-md px-md py-sm rounded text-primary dark:text-primary-fixed-dim font-bold border-r-4 border-primary dark:border-primary-fixed-dim bg-surface-variant/50 hover:bg-surface-variant dark:hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" style="font-weight: 400; stroke-width: 1.5px;">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+</li>
+<!-- Field Monitoring -->
+<li class="">
+<a class="flex items-center gap-md px-md py-sm rounded text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant dark:hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" style="font-weight: 300; stroke-width: 1.5px;">potted_plant</span>
+<span class="font-label-md text-label-md">Field Monitoring</span>
+</a>
+</li>
+<!-- Rover Fleet -->
+<li class="">
+<a class="flex items-center gap-md px-md py-sm rounded text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant dark:hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" style="font-weight: 300; stroke-width: 1.5px;">precision_manufacturing</span>
+<span class="font-label-md text-label-md">Rover Fleet</span>
+</a>
+</li>
+<!-- Task Manager -->
+<li class="">
+<a class="flex items-center gap-md px-md py-sm rounded text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant dark:hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" style="font-weight: 300; stroke-width: 1.5px;">assignment</span>
+<span class="font-label-md text-label-md">Task Manager</span>
+</a>
+</li>
+<!-- AI Insights -->
+<li class="">
+<a class="flex items-center gap-md px-md py-sm rounded text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant dark:hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" style="font-weight: 300; stroke-width: 1.5px;">psychology</span>
+<span class="font-label-md text-label-md">AI Insights</span>
+</a>
+</li>
+<!-- Expert Support -->
+<li class="">
+<a class="flex items-center gap-md px-md py-sm rounded text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant dark:hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" style="font-weight: 300; stroke-width: 1.5px;">local_police</span>
+<span class="font-label-md text-label-md">Expert Support</span>
+</a>
+</li>
+</ul>
+</div>
+<div class="p-md">
+<button class="w-full bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md py-sm rounded transition-colors flex items-center justify-center gap-sm">
+<span class="material-symbols-outlined" style="font-size: 18px;">play_arrow</span>
+                Deploy Rover
+            </button>
+</div>
+<div class="mt-auto border-t border-outline-variant dark:border-outline py-sm">
+<ul class="flex flex-col gap-xs px-sm">
+<li class="">
+<a class="flex items-center gap-md px-md py-sm rounded text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant dark:hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" style="font-weight: 300; stroke-width: 1.5px;">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</li>
+<li class="">
+<a class="flex items-center gap-md px-md py-sm rounded text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant dark:hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" style="font-weight: 300; stroke-width: 1.5px;">logout</span>
+<span class="font-label-md text-label-md">Log Out</span>
+</a>
+</li>
+</ul>
+<div class="px-gutter mt-sm flex items-center gap-sm cursor-pointer hover:bg-surface-variant p-sm rounded mx-sm transition-colors">
+<img class="w-8 h-8 rounded-full object-cover" data-alt="A small, circular avatar portrait of an Indian male farmer named Rajesh in his late 40s. He is wearing a simple collared shirt and has a warm, confident expression. The background is a slightly blurred, bright outdoor agricultural setting, typical of a modern farm. The lighting is natural and flattering, adhering to a clean, professional aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuABzgdO7wRgGq0_Ly_xXGaGwPy4lNdHvySrkrsx1bRuYoQ8E0CZttcsykzMjOsf1cdee_tRBRcoRc1UndibeVavkaX5-V74dEj8OWaxvPquQgvf9Wi0j9_zIJ4xs2zws8LHaMZscLriQT8mBWavKPRNgVlTnP3HFxapUYTPH4hHz9IFNm5CuChsO09l3KTinYQD5HTP_mL6nupwQf7xEWCrhXmOH-JWsWktngSqer6r9YYEeLnYyfMl">
+<div class="flex-1 overflow-hidden">
+<p class="font-label-md text-label-md text-on-surface truncate">Rajesh Kumar</p>
+<p class="font-body-sm text-[10px] text-on-surface-variant truncate">North Field Farm</p>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col h-full overflow-hidden relative">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-gutter h-16 bg-surface dark:bg-surface-dim text-primary dark:text-primary-fixed-dim bg-surface-container-low dark:bg-surface-container-low shadow-sm docked full-width top-0 z-10 shrink-0">
+<div class="flex items-center gap-md">
+<button class="md:hidden text-on-surface-variant hover:bg-surface-variant p-xs rounded transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="font-headline-sm text-headline-sm font-bold text-primary dark:text-primary-fixed hidden md:block">Smart Farm Rover AI</div>
+</div>
+<!-- Mobile Brand (centered if search is hidden or beside menu) -->
+<div class="font-headline-sm text-headline-sm font-bold text-primary dark:text-primary-fixed md:hidden absolute left-1/2 -translate-x-1/2">Smart Farm Rover AI</div>
+<div class="flex items-center gap-sm">
+<button class="text-on-surface-variant hover:bg-surface-variant p-xs rounded transition-colors relative">
+<span class="material-symbols-outlined">sensors</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-variant p-xs rounded transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-variant p-xs rounded transition-colors md:hidden">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Scrollable Canvas -->
+<main class="flex-1 overflow-y-auto p-gutter md:p-container-margin pb-24 md:pb-container-margin relative z-0">
+<!-- Dashboard Header Section -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-md mb-lg">
+<div>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-xs">Good Morning, Farmer Rajesh</h2>
+<div class="flex flex-wrap items-center gap-sm font-body-sm text-body-sm text-on-surface-variant">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary" style="font-size: 16px;">location_on</span>
+<span class="font-medium text-on-surface">North Field</span>
+</div>
+<span class="text-outline">|</span>
+<div class="flex items-center gap-xs">
+<div class="w-2 h-2 rounded-full bg-primary relative">
+<div class="absolute inset-0 rounded-full bg-primary animate-ping opacity-75"></div>
+</div>
+<span class="">Rover Online</span>
+</div>
+<span class="text-outline">|</span>
+<div class="flex items-center gap-xs text-outline-variant">
+<span class="material-symbols-outlined" style="font-size: 16px;">sync</span>
+<span class="">Last Sync: 5 mins ago</span>
+</div>
+</div>
+</div>
+<div class="flex gap-sm w-full md:w-auto">
+<button class="flex-1 md:flex-none flex items-center justify-center gap-xs px-md py-sm rounded border border-outline text-on-surface hover:bg-surface-variant transition-colors font-label-md text-label-md">
+<span class="material-symbols-outlined" style="font-size: 18px;">filter_list</span>
+                        Filter View
+                    </button>
+<button class="flex-1 md:flex-none flex items-center justify-center gap-xs px-md py-sm rounded bg-primary text-on-primary hover:bg-primary-container transition-colors shadow-sm font-label-md text-label-md">
+<span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+                        New Task
+                    </button>
+</div>
+</div>
+<!-- Metric Cards (Bento Grid) -->
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-md mb-lg">
+<!-- Field Health -->
+<div class="col-span-2 md:col-span-3 lg:col-span-2 bg-surface-container-lowest rounded-lg p-md card-shadow border border-surface-variant flex flex-col justify-between h-full relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full -z-10"></div>
+<div>
+<div class="flex justify-between items-start mb-sm">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Field Health Index</span>
+<span class="material-symbols-outlined text-primary">eco</span>
+</div>
+<div class="flex items-baseline gap-xs">
+<span class="font-display-lg text-display-lg text-on-surface">92<span class="text-headline-md">%</span></span>
+</div>
+</div>
+<div class="mt-md flex items-center justify-between">
+<span class="px-xs py-1 rounded-full badge-normal font-label-md text-[10px] uppercase">Healthy</span>
+<div class="w-24 h-6 relative">
+<!-- SVG Sparkline placeholder (Positive trend) -->
+<svg class="w-full h-full text-primary stroke-current" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 100 20">
+<path d="M0,20 L20,15 L40,18 L60,10 L80,12 L100,2"></path>
+</svg>
+</div>
+</div>
+</div>
+<!-- Active Risks -->
+<div class="col-span-2 md:col-span-3 lg:col-span-1 bg-surface-container-lowest rounded-lg p-md card-shadow border border-surface-variant flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-sm">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Active Risks</span>
+<span class="material-symbols-outlined text-secondary">warning</span>
+</div>
+<div class="flex items-baseline gap-xs">
+<span class="font-headline-lg text-headline-lg text-on-surface">1</span>
+</div>
+</div>
+<div class="mt-md">
+<span class="px-xs py-1 rounded-full badge-warning font-label-md text-[10px] uppercase">Medium</span>
+</div>
+</div>
+<!-- Soil Moisture -->
+<div class="col-span-1 bg-surface-container-lowest rounded-lg p-md card-shadow border border-surface-variant flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-sm">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Moisture</span>
+<span class="material-symbols-outlined text-blue-600">water_drop</span>
+</div>
+<div class="flex items-baseline gap-xs">
+<span class="font-headline-lg text-headline-lg text-on-surface">42<span class="text-body-sm">%</span></span>
+</div>
+</div>
+<div class="mt-md w-full bg-surface-variant h-1.5 rounded-full overflow-hidden">
+<div class="bg-blue-500 h-full rounded-full" style="width: 42%;"></div>
+</div>
+</div>
+<!-- Temperature -->
+<div class="col-span-1 bg-surface-container-lowest rounded-lg p-md card-shadow border border-surface-variant flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-sm">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Temp</span>
+<span class="material-symbols-outlined text-orange-500">thermostat</span>
+</div>
+<div class="flex items-baseline gap-xs">
+<span class="font-headline-lg text-headline-lg text-on-surface">31<span class="text-body-sm">°C</span></span>
+</div>
+</div>
+<div class="mt-md w-full bg-surface-variant h-1.5 rounded-full overflow-hidden">
+<div class="bg-orange-400 h-full rounded-full" style="width: 65%;"></div>
+</div>
+</div>
+<!-- Humidity -->
+<div class="col-span-1 bg-surface-container-lowest rounded-lg p-md card-shadow border border-surface-variant flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-sm">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Humidity</span>
+<span class="material-symbols-outlined text-cyan-600">air</span>
+</div>
+<div class="flex items-baseline gap-xs">
+<span class="font-headline-lg text-headline-lg text-on-surface">65<span class="text-body-sm">%</span></span>
+</div>
+</div>
+<div class="mt-md w-full bg-surface-variant h-1.5 rounded-full overflow-hidden">
+<div class="bg-cyan-500 h-full rounded-full" style="width: 65%;"></div>
+</div>
+</div>
+<!-- Rover Battery -->
+<div class="col-span-1 bg-surface-container-lowest rounded-lg p-md card-shadow border border-surface-variant flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-sm">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Rover Bat.</span>
+<span class="material-symbols-outlined text-primary">battery_charging_80</span>
+</div>
+<div class="flex items-baseline gap-xs">
+<span class="font-headline-lg text-headline-lg text-on-surface">88<span class="text-body-sm">%</span></span>
+</div>
+</div>
+<div class="mt-md w-full bg-surface-variant h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 88%;"></div>
+</div>
+</div>
+</div>
+<!-- Main Content Sections (Asymmetric Layout) -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-md">
+<!-- Field Health Visualization (Span 2) -->
+<div class="lg:col-span-2 bg-surface-container-lowest rounded-lg card-shadow border border-surface-variant overflow-hidden flex flex-col">
+<div class="p-md border-b border-surface-variant flex justify-between items-center bg-surface-bright">
+<h3 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-sm">
+<span class="material-symbols-outlined text-on-surface-variant">map</span>
+                            Field Health Map
+                        </h3>
+<div class="flex gap-sm">
+<div class="flex items-center gap-xs font-label-md text-[10px]"><span class="w-2 h-2 rounded-full bg-primary"></span> Healthy</div>
+<div class="flex items-center gap-xs font-label-md text-[10px]"><span class="w-2 h-2 rounded-full bg-secondary"></span> Needs Inspection</div>
+<div class="flex items-center gap-xs font-label-md text-[10px]"><span class="w-2 h-2 rounded-full bg-error"></span> At-Risk</div>
+</div>
+</div>
+<div class="relative w-full h-[300px] md:h-[400px] bg-surface-container overflow-hidden">
+<!-- Simulated Map Background -->
+<div class="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-multiply" data-alt="A highly detailed, top-down satellite view or drone aerial shot of a modern, geometric agricultural field. The field is segmented into distinct rows and plots. The image should have a clean, light-mode, technical aesthetic. Overlay a subtle grid pattern to emphasize precision agriculture. Colors should be predominantly healthy greens, earth tones, and muted grays, adhering to the functional minimalism style." style="background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuBwEoSJX2-MgYwPmHJ34Wv0I70-zVfYMm99d9AOJ3qomk-UrmMIY5B9TbY6TXMYsLMWmS6i3YSM9gfQxBMgclUS0VlNRkCsBLboXB49k_MkRhFs6GHouvjplPhD4Ep6FPBiElUb1XYUjAdA4mrTttFAGed_7OzgZobZd4PBiuJO7q0Lq0oJhLediEQUVWjOAsEd1sORWu25EHxBynkTesxpX6PvfFDX4fuRrxWo8H2RgY9Vzccnrby7&quot;);"></div>
+<!-- Map Overlay Zones (SVG for precision) -->
+<svg class="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
+<!-- Healthy Zone -->
+<polygon fill="rgba(46, 125, 50, 0.2)" points="27,59 51,59 52,32 28,31" stroke="#0d631b" stroke-dasharray="2,2" stroke-width="0.5" class=""></polygon>
+<!-- Needs Inspection Zone -->
+<polygon fill="rgba(122, 86, 73, 0.2)" points="65,20 95,15 90,50 60,45" stroke="#7a5649" stroke-dasharray="2,2" stroke-width="0.5"></polygon>
+<!-- At-Risk Zone -->
+<circle cx="75" cy="75" fill="rgba(186, 26, 26, 0.2)" r="15" stroke="#ba1a1a" stroke-width="0.5"></circle>
+<!-- Rover Position Indicator -->
+<g transform="translate(30, 40)">
+<circle cx="0" cy="0" fill="#0d631b" r="2"></circle>
+<circle class="animate-ping" cx="0" cy="0" fill="none" r="4" stroke="#0d631b" stroke-width="0.5"></circle>
+</g>
+</svg>
+<div class="absolute bottom-md right-md bg-surface-container-lowest/90 backdrop-blur-sm p-sm rounded card-shadow border border-surface-variant">
+<div class="flex items-center gap-xs text-on-surface font-label-md text-label-md">
+<span class="material-symbols-outlined text-primary" style="font-size: 16px;">my_location</span>
+                                 Rover Active
+                             </div>
+</div>
+</div>
+</div>
+<!-- Right Column: Actions & AI Detections -->
+<div class="lg:col-span-1 flex flex-col gap-md">
+<!-- Next Actions -->
+<div class="bg-surface-container-lowest rounded-lg card-shadow border border-surface-variant overflow-hidden flex-1">
+<div class="p-md border-b border-surface-variant bg-surface-bright flex justify-between items-center">
+<h3 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-sm">
+<span class="material-symbols-outlined text-on-surface-variant">playlist_add_check</span>
+                                Next Actions
+                            </h3>
+<button class="text-primary hover:bg-primary/10 p-xs rounded transition-colors">
+<span class="material-symbols-outlined" style="font-size: 20px;">more_vert</span>
+</button>
+</div>
+<ul class="divide-y divide-surface-variant">
+<li class="p-md flex items-start gap-sm hover:bg-surface-bright transition-colors cursor-pointer group">
+<div class="mt-0.5">
+<input class="w-4 h-4 rounded border-outline text-primary focus:ring-primary focus:ring-offset-0 bg-surface-container-lowest cursor-pointer" type="checkbox">
+</div>
+<div class="flex-1">
+<p class="font-body-md text-body-md text-on-surface font-medium group-hover:text-primary transition-colors">Inspect row 4 - Tomato</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">Scheduled by AI based on growth model anomaly.</p>
+</div>
+</li>
+<li class="p-md flex items-start gap-sm hover:bg-surface-bright transition-colors cursor-pointer group">
+<div class="mt-0.5">
+<input class="w-4 h-4 rounded border-outline text-primary focus:ring-primary focus:ring-offset-0 bg-surface-container-lowest cursor-pointer" type="checkbox">
+</div>
+<div class="flex-1">
+<p class="font-body-md text-body-md text-on-surface font-medium group-hover:text-primary transition-colors">Low moisture in South patch</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">Trigger irrigation sequence for sectors 7-9.</p>
+</div>
+</li>
+<li class="p-md flex items-start gap-sm hover:bg-surface-bright transition-colors cursor-pointer group">
+<div class="mt-0.5">
+<input class="w-4 h-4 rounded border-outline text-primary focus:ring-primary focus:ring-offset-0 bg-surface-container-lowest cursor-pointer" type="checkbox">
+</div>
+<div class="flex-1">
+<p class="font-body-md text-body-md text-on-surface font-medium group-hover:text-primary transition-colors">Clean Rover Camera Lenses</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">Routine maintenance required for optimal AI detection.</p>
+</div>
+</li>
+</ul>
+<div class="p-sm bg-surface-bright border-t border-surface-variant text-center">
+<button class="text-primary font-label-md text-label-md hover:underline">View All Actions</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent AI Detections (Full Width Bottom) -->
+<div class="mt-md bg-surface-container-lowest rounded-lg card-shadow border border-surface-variant overflow-hidden">
+<div class="p-md border-b border-surface-variant bg-surface-bright flex justify-between items-center">
+<h3 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">visibility</span>
+                        Recent AI Detections
+                    </h3>
+<span class="px-sm py-1 bg-surface-variant rounded-full text-on-surface-variant font-label-md text-[10px]">Last 24 Hours</span>
+</div>
+<div class="p-md">
+<!-- AI Evidence Card -->
+<div class="flex flex-col md:flex-row gap-md p-sm border border-surface-variant rounded-lg hover:border-primary/50 transition-colors bg-surface-bright/50">
+<!-- Thumbnail -->
+<div class="w-full md:w-32 h-32 md:h-auto shrink-0 relative rounded bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A close-up, high-resolution macro shot of a tomato plant leaf showing early signs of blight. The leaf has small, irregular dark brown spots with subtle yellow halos. The lighting is bright and clinical, typical of an automated rover camera flash in a field setting. The background is slightly blurred out foliage. The overall aesthetic is scientific and analytical." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCco9HbbANzJN3DtdcWOIs7Vgsnn8ANOjevqCe1CZyqdUfJ-ievG2YDBbOKLAOITL4BUcw_2G3KvZF90Y2KtZrJpqH4pi96xZiU8yT4nahsGUnVcmGdAzuBTj7Z-y3-naUQ9T74M2OLih4CSY-A-A7sYdhNT3takIIBBIGm7PlRIcaaDUcEklOBJx6YIJ-kudtn4rmWZjm0HkewvU7jSXFLS2tHT6UWUR45Vyny0LGy--oeKtijmbal">
+<!-- Detection bounding box overlay -->
+<div class="absolute inset-0 m-2 border-2 border-secondary/80 bg-secondary/10 rounded-sm"></div>
+</div>
+<!-- Details -->
+<div class="flex-1 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-xs">
+<h4 class="font-headline-sm text-[18px] font-semibold text-on-surface">Tomato - Possible Early Blight</h4>
+<span class="px-sm py-0.5 rounded-full badge-warning font-label-md text-[10px] uppercase">Medium Risk</span>
+</div>
+<div class="flex flex-wrap gap-x-md gap-y-xs font-body-sm text-body-sm text-on-surface-variant mb-md">
+<div class="flex items-center gap-xs"><span class="material-symbols-outlined" style="font-size: 16px;">location_on</span> North Field, Row 4</div>
+<div class="flex items-center gap-xs"><span class="material-symbols-outlined" style="font-size: 16px;">schedule</span> 12m ago</div>
+<div class="flex items-center gap-xs"><span class="material-symbols-outlined" style="font-size: 16px;">radar</span> Rover-02</div>
+</div>
+</div>
+<!-- Validation Actions -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-sm mt-auto pt-sm border-t border-surface-variant border-dashed">
+<div class="flex items-center gap-sm">
+<span class="px-sm py-1 rounded-full bg-surface-container-high text-on-surface-variant font-label-md text-[11px] flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary" style="font-size: 14px;">check_circle</span>
+                                        72% Confidence
+                                    </span>
+<span class="font-body-sm text-body-sm text-outline italic">Status: Pending Validation</span>
+</div>
+<div class="flex gap-sm w-full sm:w-auto">
+<button class="flex-1 sm:flex-none px-md py-1.5 rounded border border-outline text-on-surface hover:bg-error-container hover:text-on-error-container hover:border-error-container transition-colors font-label-md text-label-md">
+                                        Reject
+                                    </button>
+<button class="flex-1 sm:flex-none px-md py-1.5 rounded bg-primary text-on-primary hover:bg-primary-container transition-colors font-label-md text-label-md">
+                                        Confirm Risk
+                                    </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+
+</body></html>

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Smart Farm Rover AI - Live Control</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-fixed-variant": "#7f2448",
+                    "surface-variant": "#e0e4da",
+                    "primary-fixed-dim": "#88d982",
+                    "on-primary-container": "#cbffc2",
+                    "error-container": "#ffdad6",
+                    "inverse-primary": "#88d982",
+                    "on-surface": "#181d17",
+                    "secondary-fixed": "#ffdbcf",
+                    "error": "#ba1a1a",
+                    "tertiary": "#923357",
+                    "inverse-surface": "#2d322b",
+                    "tertiary-container": "#b14b6f",
+                    "on-secondary-container": "#795548",
+                    "surface-bright": "#f7fbf0",
+                    "on-background": "#181d17",
+                    "on-primary-fixed-variant": "#005312",
+                    "on-primary-fixed": "#002204",
+                    "on-surface-variant": "#40493d",
+                    "surface-container-high": "#e5eadf",
+                    "primary-fixed": "#a3f69c",
+                    "on-primary": "#ffffff",
+                    "secondary-fixed-dim": "#ebbcac",
+                    "surface": "#f7fbf0",
+                    "tertiary-fixed-dim": "#ffb1c7",
+                    "on-secondary": "#ffffff",
+                    "surface-dim": "#d7dbd2",
+                    "on-error": "#ffffff",
+                    "surface-container-low": "#f1f5eb",
+                    "on-error-container": "#93000a",
+                    "secondary-container": "#fdcdbc",
+                    "tertiary-fixed": "#ffd9e2",
+                    "on-tertiary": "#ffffff",
+                    "inverse-on-surface": "#eef2e8",
+                    "on-secondary-fixed-variant": "#603f33",
+                    "background": "#f7fbf0",
+                    "secondary": "#7a5649",
+                    "primary": "#0d631b",
+                    "surface-container-lowest": "#ffffff",
+                    "outline-variant": "#bfcaba",
+                    "on-tertiary-container": "#ffedf0",
+                    "on-secondary-fixed": "#2e150b",
+                    "outline": "#707a6c",
+                    "surface-container-highest": "#e0e4da",
+                    "on-tertiary-fixed": "#3f001c",
+                    "primary-container": "#2e7d32",
+                    "surface-container": "#ebefe5",
+                    "surface-tint": "#1b6d24"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "4px",
+                    "xl": "32px",
+                    "gutter": "16px",
+                    "sm": "8px",
+                    "container-margin": "24px",
+                    "md": "16px",
+                    "lg": "24px",
+                    "base": "4px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-sm": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "display-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .filled-icon {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Ambient shadow for surfaces */
+        .surface-shadow {
+            box-shadow: 0px 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        /* Camera overlay crosshair */
+        .crosshair::before, .crosshair::after {
+            content: '';
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.5);
+            z-index: 10;
+        }
+        .crosshair::before { top: 50%; left: 0; right: 0; height: 1px; }
+        .crosshair::after { left: 50%; top: 0; bottom: 0; width: 1px; }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col h-full border-r border-outline-variant bg-surface-container-highest w-64 fixed left-0 top-0 bottom-0 z-20">
+<div class="p-lg">
+<h1 class="font-headline-sm text-headline-sm font-bold text-on-surface">Smart Farm AI</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-sm">Precision Agriculture Platform</p>
+</div>
+<div class="px-gutter mb-lg">
+<button class="w-full bg-primary text-on-primary py-sm px-md rounded-DEFAULT font-label-md hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm flex items-center justify-center gap-sm">
+<span class="material-symbols-outlined">rocket_launch</span>
+                Deploy Rover
+            </button>
+</div>
+<ul class="flex-1 px-sm space-y-xs">
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-DEFAULT text-on-surface-variant hover:bg-surface-variant transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-DEFAULT text-on-surface-variant hover:bg-surface-variant transition-all" href="#">
+<span class="material-symbols-outlined">potted_plant</span>
+<span class="font-label-md text-label-md">Field Monitoring</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-DEFAULT text-primary font-bold border-r-4 border-primary bg-surface-variant translate-x-1 duration-200 shadow-sm" href="#">
+<span class="material-symbols-outlined filled-icon">precision_manufacturing</span>
+<span class="font-label-md text-label-md">Rover Fleet</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-DEFAULT text-on-surface-variant hover:bg-surface-variant transition-all" href="#">
+<span class="material-symbols-outlined">assignment</span>
+<span class="font-label-md text-label-md">Task Manager</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-DEFAULT text-on-surface-variant hover:bg-surface-variant transition-all" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-label-md text-label-md">AI Insights</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-DEFAULT text-on-surface-variant hover:bg-surface-variant transition-all" href="#">
+<span class="material-symbols-outlined">local_police</span>
+<span class="font-label-md text-label-md">Expert Support</span>
+</a>
+</li>
+</ul>
+<div class="p-sm border-t border-outline-variant">
+<a class="flex items-center gap-md px-md py-sm rounded-DEFAULT text-on-surface-variant hover:bg-surface-variant transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-DEFAULT text-on-surface-variant hover:bg-surface-variant transition-all" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md text-label-md">Log Out</span>
+</a>
+<div class="flex items-center gap-md p-md mt-sm">
+<div class="w-8 h-8 rounded-full bg-surface-variant overflow-hidden border border-outline">
+<img alt="User Profile Profile" class="w-full h-full object-cover" data-alt="A small circular avatar of a professional agronomist or technician in a well-lit field, serving as a user profile picture. Modern corporate style, natural lighting, subtle background blur." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAi0ZhBUmAIimL96mS7STzvN7mk8XAOsTB8s6MpUN6-tbK7XrnU-HPag-i_eQAvThJPjkY2OQUCVks7upfFvXh6tvnekObQSIGS7CD4ygohnQt3WKNQkfLob-j1gyqG10ET3zObfaZKFVHrCoMF8wFvi74XjKPhGeBr5oqpMrKPyAjK6RQTA0Q6gf4-dVqRSwXgk6OacnXtfuv77kY714LO9BI1Bj-6Iyy88TO6KupnsgXo8LGKaNSm"/>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-64 flex flex-col min-h-screen">
+<!-- TopAppBar -->
+<header class="bg-surface shadow-sm docked full-width top-0 z-10 sticky">
+<div class="flex justify-between items-center w-full px-gutter h-16 bg-surface-container-low">
+<div class="flex items-center gap-md md:hidden">
+<button class="text-on-surface-variant hover:bg-surface-variant p-sm rounded-full transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary">Smart Farm Rover AI</h1>
+</div>
+<div class="hidden md:flex items-center bg-surface-variant rounded-full px-md py-sm w-96 border border-transparent focus-within:border-primary focus-within:bg-surface transition-all">
+<span class="material-symbols-outlined text-on-surface-variant mr-sm">search</span>
+<input class="bg-transparent border-none outline-none text-body-sm text-on-surface w-full placeholder:text-on-surface-variant focus:ring-0" placeholder="Search rovers, fields, tasks..." type="text"/>
+</div>
+<div class="flex items-center gap-sm">
+<button class="text-primary hover:bg-surface-variant p-sm rounded-full transition-colors opacity-80 hover:opacity-100 scale-95 hover:scale-100">
+<span class="material-symbols-outlined">sensors</span>
+</button>
+<button class="text-primary hover:bg-surface-variant p-sm rounded-full transition-colors opacity-80 hover:opacity-100 scale-95 hover:scale-100">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-primary hover:bg-surface-variant p-sm rounded-full transition-colors opacity-80 hover:opacity-100 scale-95 hover:scale-100">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<div class="p-container-margin md:p-lg flex-1 overflow-y-auto">
+<!-- Header section for Rover Control -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-lg gap-md">
+<div>
+<h2 class="font-headline-lg md:font-display-lg text-headline-lg-mobile md:text-display-lg text-on-surface">Rover R-Alpha</h2>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-xs mt-xs">
+<span class="w-2 h-2 rounded-full bg-primary inline-block"></span> Active Inspection - Sector 4B
+                    </p>
+</div>
+<div class="flex gap-sm">
+<span class="inline-flex items-center gap-xs px-sm py-xs rounded-full bg-surface-variant text-on-surface-variant font-label-md text-label-md border border-outline-variant">
+<span class="material-symbols-outlined text-[16px]">signal_cellular_alt</span> Excellent
+                    </span>
+<span class="inline-flex items-center gap-xs px-sm py-xs rounded-full bg-surface-variant text-on-surface-variant font-label-md text-label-md border border-outline-variant">
+<span class="material-symbols-outlined text-[16px] text-primary">battery_full</span> 84%
+                    </span>
+<span class="inline-flex items-center gap-xs px-sm py-xs rounded-full bg-surface-variant text-on-surface-variant font-label-md text-label-md border border-outline-variant">
+<span class="material-symbols-outlined text-[16px]">my_location</span> Lat: 34.05, Lng: -118.24
+                    </span>
+</div>
+</div>
+<!-- Main Layout Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
+<!-- Center/Left Column: Camera & Controls -->
+<div class="lg:col-span-8 flex flex-col gap-lg">
+<!-- Live Camera Feed (Bento style large card) -->
+<div class="bg-surface rounded-xl surface-shadow overflow-hidden border border-surface-container-highest relative flex flex-col">
+<div class="p-md border-b border-surface-container-highest flex justify-between items-center bg-surface-container-lowest z-10">
+<h3 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">videocam</span> Main Optics
+                            </h3>
+<div class="flex gap-sm">
+<span class="bg-primary/10 text-primary px-sm py-xs rounded-full font-label-md text-label-md flex items-center gap-xs">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span> LIVE
+                                 </span>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">fullscreen</span>
+</button>
+</div>
+</div>
+<div class="relative w-full aspect-video bg-black crosshair overflow-hidden group">
+<!-- Image representing camera feed -->
+<img alt="Live Camera Feed" class="w-full h-full object-cover opacity-90" data-alt="A highly detailed first-person view from a small agricultural rover moving between rows of corn or soybeans. The camera feed shows close-up, sharp details of plant leaves under bright daylight, with a slightly technical, slightly grainy quality typical of industrial cameras. Overlaid subtle UI elements suggest AI analysis." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUC6pXjGuVK7ok0QQeOfzT0mNyqNYWetRy_Mhd12Ry6pDE9-ClAkpcFklam0Ftft1D-aa_lEAj5mPOEYu91zqTA0TqC5lnWWMfC-B0xJ5vvMxYHZFo4_BPsJsDvpLJhsGCDDkPnJklpsWQfMG52-rxEfUdggkhwZCnRpJs9XSvty5lvY78DgIB3DWzTH7ZQQNV560qpsCcfX4IV6FvMWTIQNwUZadfdaLpHH1yegXQvjA5KButhWVR"/>
+<!-- AI Bounding Box Overlays (Simulated) -->
+<div class="absolute top-[30%] left-[40%] w-[15%] h-[20%] border-2 border-primary rounded-sm bg-primary/10">
+<span class="absolute -top-6 left-0 bg-primary text-on-primary text-[10px] font-bold px-1 py-0.5 rounded-sm whitespace-nowrap">Healthy Leaf 98%</span>
+</div>
+<div class="absolute top-[50%] left-[20%] w-[12%] h-[18%] border-2 border-error rounded-sm bg-error/10">
+<span class="absolute -top-6 left-0 bg-error text-on-error text-[10px] font-bold px-1 py-0.5 rounded-sm whitespace-nowrap">Pest Damage 82%</span>
+</div>
+<!-- HUD Elements -->
+<div class="absolute bottom-4 left-4 text-white font-mono text-xs opacity-70">
+                                CAM-FWD | 1080p | 60FPS <br/>
+                                ZOOM: 1.0x
+                            </div>
+</div>
+</div>
+<!-- Rover Controls & Mission Progress -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+<!-- Actions & Progress -->
+<div class="bg-surface rounded-xl surface-shadow p-md border border-surface-container-highest flex flex-col gap-md">
+<h3 class="font-headline-sm text-headline-sm text-on-surface border-b border-surface-container-highest pb-sm">Mission Status</h3>
+<!-- Progress Bar -->
+<div>
+<div class="flex justify-between font-label-md text-label-md text-on-surface-variant mb-xs">
+<span>Row Inspection</span>
+<span>68% Complete</span>
+</div>
+<div class="w-full h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[68%]"></div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-sm text-right">Est. time remaining: 45 min</p>
+</div>
+<!-- Primary Action Buttons -->
+<div class="grid grid-cols-2 gap-sm mt-auto">
+<button class="bg-primary text-on-primary py-sm px-md rounded-DEFAULT font-label-md hover:bg-primary-container transition-colors shadow-sm flex items-center justify-center gap-xs">
+<span class="material-symbols-outlined">play_arrow</span> Resume
+                                 </button>
+<button class="bg-surface border border-outline text-on-surface py-sm px-md rounded-DEFAULT font-label-md hover:bg-surface-variant transition-colors flex items-center justify-center gap-xs">
+<span class="material-symbols-outlined">pause</span> Pause
+                                 </button>
+</div>
+<div class="grid grid-cols-2 gap-sm">
+<button class="bg-surface border border-outline text-secondary py-sm px-md rounded-DEFAULT font-label-md hover:bg-surface-variant transition-colors flex items-center justify-center gap-xs">
+<span class="material-symbols-outlined">photo_camera</span> Capture
+                                 </button>
+<button class="bg-surface border border-outline text-secondary py-sm px-md rounded-DEFAULT font-label-md hover:bg-surface-variant transition-colors flex items-center justify-center gap-xs">
+<span class="material-symbols-outlined">biotech</span> Sample
+                                 </button>
+</div>
+</div>
+<!-- Manual D-Pad Controls -->
+<div class="bg-surface rounded-xl surface-shadow p-md border border-surface-container-highest flex flex-col items-center justify-center">
+<div class="w-full flex justify-between items-center mb-md">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Manual Override</h3>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+<span class="ms-3 font-label-md text-label-md text-on-surface-variant">Auto</span>
+</label>
+</div>
+<div class="grid grid-cols-3 grid-rows-3 gap-xs w-48 h-48 opacity-50 pointer-events-none transition-opacity" id="dpad-container">
+<!-- Top -->
+<div class="col-start-2 flex justify-center items-end">
+<button class="w-12 h-12 bg-surface-container-high rounded-t-lg hover:bg-surface-variant active:bg-surface-dim border border-outline-variant flex justify-center items-center">
+<span class="material-symbols-outlined text-on-surface">arrow_upward</span>
+</button>
+</div>
+<!-- Left -->
+<div class="col-start-1 row-start-2 flex justify-end items-center">
+<button class="w-12 h-12 bg-surface-container-high rounded-l-lg hover:bg-surface-variant active:bg-surface-dim border border-outline-variant flex justify-center items-center">
+<span class="material-symbols-outlined text-on-surface">arrow_back</span>
+</button>
+</div>
+<!-- Center Stop -->
+<div class="col-start-2 row-start-2 flex justify-center items-center">
+<button class="w-12 h-12 bg-error-container text-on-error-container rounded-full hover:bg-error hover:text-on-error transition-colors flex justify-center items-center shadow-sm">
+<span class="material-symbols-outlined">stop</span>
+</button>
+</div>
+<!-- Right -->
+<div class="col-start-3 row-start-2 flex justify-start items-center">
+<button class="w-12 h-12 bg-surface-container-high rounded-r-lg hover:bg-surface-variant active:bg-surface-dim border border-outline-variant flex justify-center items-center">
+<span class="material-symbols-outlined text-on-surface">arrow_forward</span>
+</button>
+</div>
+<!-- Bottom -->
+<div class="col-start-2 row-start-3 flex justify-center items-start">
+<button class="w-12 h-12 bg-surface-container-high rounded-b-lg hover:bg-surface-variant active:bg-surface-dim border border-outline-variant flex justify-center items-center">
+<span class="material-symbols-outlined text-on-surface">arrow_downward</span>
+</button>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-sm text-center">Toggle Auto off to engage manual steering.</p>
+</div>
+</div>
+</div>
+<!-- Right Column: Telemetry -->
+<div class="lg:col-span-4 flex flex-col gap-lg">
+<div class="bg-surface rounded-xl surface-shadow p-md border border-surface-container-highest flex-1">
+<h3 class="font-headline-sm text-headline-sm text-on-surface border-b border-surface-container-highest pb-sm mb-md flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary">show_chart</span> Live Telemetry
+                        </h3>
+<div class="space-y-md">
+<!-- Telemetry Metric 1 -->
+<div class="bg-surface-container-low p-sm rounded-lg border border-outline-variant">
+<div class="flex justify-between items-center mb-xs">
+<span class="font-label-md text-label-md text-on-surface-variant">Soil Temp</span>
+<span class="font-headline-md text-headline-md text-on-surface">22°C</span>
+</div>
+<div class="h-16 w-full">
+<canvas id="chartTemp"></canvas>
+</div>
+</div>
+<!-- Telemetry Metric 2 -->
+<div class="bg-surface-container-low p-sm rounded-lg border border-outline-variant">
+<div class="flex justify-between items-center mb-xs">
+<span class="font-label-md text-label-md text-on-surface-variant">Moisture</span>
+<span class="font-headline-md text-headline-md text-on-surface">45%</span>
+</div>
+<div class="h-16 w-full">
+<canvas id="chartMoisture"></canvas>
+</div>
+</div>
+<!-- Telemetry Metric 3 -->
+<div class="bg-surface-container-low p-sm rounded-lg border border-outline-variant">
+<div class="flex justify-between items-center mb-xs">
+<span class="font-label-md text-label-md text-on-surface-variant">pH Level</span>
+<span class="font-headline-md text-headline-md text-on-surface">6.8</span>
+</div>
+<div class="h-16 w-full">
+<canvas id="chartPh"></canvas>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick AI Insights snippet -->
+<div class="bg-surface-bright rounded-xl surface-shadow p-md border border-surface-container-highest">
+<h4 class="font-label-md text-label-md text-on-surface uppercase mb-sm">AI Field Agent Notes</h4>
+<div class="flex gap-sm items-start bg-surface-container p-sm rounded-lg">
+<span class="material-symbols-outlined text-primary mt-xs">check_circle</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                                Nitrogen levels optimal in current sector. Minor pest detection on Row 12, isolated to lower canopy. Proceeding with standard inspection pace.
+                            </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar for Mobile -->
+<nav class="md:hidden fixed bottom-0 w-full bg-surface shadow-[0_-2px_10px_rgba(0,0,0,0.05)] flex justify-around items-center h-16 z-20 border-t border-surface-container-highest">
+<a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant hover:bg-surface-variant transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-[10px]">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-primary border-t-2 border-primary bg-surface-variant transition-colors" href="#">
+<span class="material-symbols-outlined filled-icon">precision_manufacturing</span>
+<span class="font-label-md text-[10px] font-bold">Rover</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant hover:bg-surface-variant transition-colors" href="#">
+<span class="material-symbols-outlined">map</span>
+<span class="font-label-md text-[10px]">Map</span>
+</a>
+</nav>
+<script>
+        // Simple logic to toggle manual controls visual state
+        const toggleInput = document.querySelector('input[type="checkbox"]');
+        const dpadContainer = document.getElementById('dpad-container');
+
+        toggleInput.addEventListener('change', (e) => {
+            if(!e.target.checked) {
+                // Auto is OFF, enable manual
+                dpadContainer.classList.remove('opacity-50', 'pointer-events-none');
+            } else {
+                // Auto is ON, disable manual
+                dpadContainer.classList.add('opacity-50', 'pointer-events-none');
+            }
+        });
+
+        // Chart.js initialization for sparklines
+        const chartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false }, tooltip: { enabled: false } },
+            scales: { x: { display: false }, y: { display: false } },
+            elements: { point: { radius: 0 }, line: { tension: 0.4, borderWidth: 2 } }
+        };
+
+        const ctxTemp = document.getElementById('chartTemp').getContext('2d');
+        new Chart(ctxTemp, {
+            type: 'line',
+            data: {
+                labels: ['1', '2', '3', '4', '5', '6', '7'],
+                datasets: [{
+                    data: [20, 21, 21, 22, 22, 23, 22],
+                    borderColor: '#7a5649', // secondary
+                }]
+            },
+            options: chartOptions
+        });
+
+        const ctxMoist = document.getElementById('chartMoisture').getContext('2d');
+        new Chart(ctxMoist, {
+            type: 'line',
+            data: {
+                labels: ['1', '2', '3', '4', '5', '6', '7'],
+                datasets: [{
+                    data: [50, 48, 45, 46, 45, 44, 45],
+                    borderColor: '#0d631b', // primary
+                }]
+            },
+            options: chartOptions
+        });
+
+        const ctxPh = document.getElementById('chartPh').getContext('2d');
+        new Chart(ctxPh, {
+            type: 'line',
+            data: {
+                labels: ['1', '2', '3', '4', '5', '6', '7'],
+                datasets: [{
+                    data: [6.5, 6.6, 6.8, 6.7, 6.8, 6.9, 6.8],
+                    borderColor: '#923357', // tertiary
+                }]
+            },
+            options: chartOptions
+        });
+    </script>
+</body></html>

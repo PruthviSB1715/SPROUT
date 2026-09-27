@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Agriculture Agent Dashboard - Smart Farm Rover AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary-fixed-variant": "#7f2448",
+                      "surface-variant": "#e0e4da",
+                      "primary-fixed-dim": "#88d982",
+                      "on-primary-container": "#cbffc2",
+                      "error-container": "#ffdad6",
+                      "inverse-primary": "#88d982",
+                      "on-surface": "#181d17",
+                      "secondary-fixed": "#ffdbcf",
+                      "error": "#ba1a1a",
+                      "tertiary": "#923357",
+                      "inverse-surface": "#2d322b",
+                      "tertiary-container": "#b14b6f",
+                      "on-secondary-container": "#795548",
+                      "surface-bright": "#f7fbf0",
+                      "on-background": "#181d17",
+                      "on-primary-fixed-variant": "#005312",
+                      "on-primary-fixed": "#002204",
+                      "on-surface-variant": "#40493d",
+                      "surface-container-high": "#e5eadf",
+                      "primary-fixed": "#a3f69c",
+                      "on-primary": "#ffffff",
+                      "secondary-fixed-dim": "#ebbcac",
+                      "surface": "#f7fbf0",
+                      "tertiary-fixed-dim": "#ffb1c7",
+                      "on-secondary": "#ffffff",
+                      "surface-dim": "#d7dbd2",
+                      "on-error": "#ffffff",
+                      "surface-container-low": "#f1f5eb",
+                      "on-error-container": "#93000a",
+                      "secondary-container": "#fdcdbc",
+                      "tertiary-fixed": "#ffd9e2",
+                      "on-tertiary": "#ffffff",
+                      "inverse-on-surface": "#eef2e8",
+                      "on-secondary-fixed-variant": "#603f33",
+                      "background": "#f7fbf0",
+                      "secondary": "#7a5649",
+                      "primary": "#0d631b",
+                      "surface-container-lowest": "#ffffff",
+                      "outline-variant": "#bfcaba",
+                      "on-tertiary-container": "#ffedf0",
+                      "on-secondary-fixed": "#2e150b",
+                      "outline": "#707a6c",
+                      "surface-container-highest": "#e0e4da",
+                      "on-tertiary-fixed": "#3f001c",
+                      "primary-container": "#2e7d32",
+                      "surface-container": "#ebefe5",
+                      "surface-tint": "#1b6d24"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xs": "4px",
+                      "xl": "32px",
+                      "gutter": "16px",
+                      "sm": "8px",
+                      "container-margin": "24px",
+                      "md": "16px",
+                      "lg": "24px",
+                      "base": "4px"
+              },
+              "fontFamily": {
+                      "headline-lg-mobile": ["Inter"],
+                      "label-md": ["Inter"],
+                      "headline-sm": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "body-md": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "display-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                      "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Custom Scrollbar for sleek look */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #bfcaba;
+            border-radius: 10px;
+        }
+        
+        .sparkline-up {
+            stroke: #0d631b;
+            fill: none;
+            stroke-width: 2;
+        }
+        
+        .sparkline-down {
+            stroke: #ba1a1a;
+            fill: none;
+            stroke-width: 2;
+        }
+    </style>
+</head>
+<body class="h-full bg-background text-on-background flex overflow-hidden">
+<!-- SideNavBar (from JSON, modified for requested labels but keeping structural styles) -->
+<nav class="hidden md:flex flex-col h-full border-r border-outline-variant bg-surface-container-highest docked left-0 h-full w-64 shrink-0 shadow-none z-20">
+<div class="p-gutter flex flex-col items-start border-b border-outline-variant/30">
+<div class="flex items-center gap-sm mb-4">
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-on-primary font-bold overflow-hidden shadow-sm">
+<img class="w-full h-full object-cover" data-alt="A macro shot of a single green leaf with glowing dew drops under natural sunlight, representing agricultural vitality and purity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYRjAitgY4rbNqSpwhf8T31tHdRhPDJMc27047qF5j5WSHpIBCtAxT1i0B68s8EOxhBt9h5PazoCrLW06i9LwgHOC_kXW227HP9jrPU1vFAfTBsYlAz2gJgTVN_sBtKX_G4ELoXHUsOOSWBPi1JY25wBbWG8_2atS3vx2jXigP2a8QK6L2mZSeUQn_PkPg3PVR-ir-Ym0klP47Lnkhsu2yuznoWVbBWQYcLDHvzKgeesYJaEdVfZiQ"/>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm font-bold text-on-surface">Smart Farm AI</h2>
+<p class="font-label-md text-label-md text-on-surface-variant font-normal opacity-80">Precision Agriculture Platform</p>
+</div>
+</div>
+<button class="w-full bg-primary text-on-primary py-2 px-4 rounded-lg font-label-md text-label-md hover:bg-primary-container hover:text-on-primary-container transition-all shadow-sm flex justify-center items-center gap-xs">
+                Deploy Rover
+            </button>
+</div>
+<div class="flex-1 overflow-y-auto py-sm">
+<ul class="space-y-1 px-sm">
+<!-- Overview -->
+<li>
+<a class="flex items-center gap-md px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                        Overview
+                    </a>
+</li>
+<!-- Farmers -->
+<li>
+<a class="flex items-center gap-md px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+                        Farmers
+                    </a>
+</li>
+<!-- Fields -->
+<li>
+<a class="flex items-center gap-md px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="grid_on">grid_on</span>
+                        Fields
+                    </a>
+</li>
+<!-- AI Cases - ACTIVE -->
+<li>
+<a class="flex items-center gap-md px-4 py-3 rounded-lg bg-surface-variant text-primary font-bold border-r-4 border-primary hover:bg-surface-variant transition-all font-label-md text-label-md translate-x-1 duration-200 shadow-[inset_0_1px_3px_rgba(0,0,0,0.05)]" href="#">
+<span class="material-symbols-outlined" data-icon="psychology" data-weight="fill">psychology</span>
+                        AI Cases
+                    </a>
+</li>
+<!-- Alerts -->
+<li>
+<a class="flex items-center gap-md px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="warning">warning</span>
+                        Alerts
+                        <span class="ml-auto bg-error text-on-error px-2 py-0.5 rounded-full text-[10px]">3</span>
+</a>
+</li>
+<!-- Reports -->
+<li>
+<a class="flex items-center gap-md px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+                        Reports
+                    </a>
+</li>
+</ul>
+</div>
+<div class="p-sm border-t border-outline-variant/30">
+<ul class="space-y-1">
+<li>
+<a class="flex items-center gap-md px-4 py-2 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-all font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                        Settings
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-md px-4 py-2 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-all font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+                        Log Out
+                    </a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col h-full overflow-hidden relative">
+<!-- TopAppBar (from JSON) -->
+<header class="flex justify-between items-center w-full px-gutter h-16 bg-surface shadow-sm docked full-width top-0 z-10 shrink-0">
+<!-- Mobile Menu Toggle (hidden on desktop) -->
+<button class="md:hidden mr-4 text-on-surface hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<div class="flex items-center gap-4 flex-1">
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary hidden md:block">Smart Farm Rover AI</h1>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary md:hidden">Rover AI</h1>
+</div>
+<!-- Search Bar (on_left configuration visually shifted slightly for balance) -->
+<div class="flex-1 max-w-md hidden lg:flex px-4 relative">
+<span class="material-symbols-outlined absolute left-7 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-full pl-10 pr-4 py-2 font-body-sm text-body-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="Search cases, fields, farmers..." type="text"/>
+</div>
+<div class="flex items-center gap-sm flex-1 justify-end text-primary">
+<button class="p-2 hover:bg-surface-variant rounded-full transition-colors relative group">
+<span class="material-symbols-outlined" data-icon="sensors">sensors</span>
+<span class="absolute top-full right-0 mt-1 bg-inverse-surface text-inverse-on-surface text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50">Sensors</span>
+</button>
+<button class="p-2 hover:bg-surface-variant rounded-full transition-colors relative group">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-1 right-2 w-2 h-2 bg-error rounded-full"></span>
+<span class="absolute top-full right-0 mt-1 bg-inverse-surface text-inverse-on-surface text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50">Notifications</span>
+</button>
+<button class="p-2 hover:bg-surface-variant rounded-full transition-colors ml-2 border border-outline-variant/30 flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Scrollable Canvas -->
+<div class="flex-1 overflow-y-auto p-container-margin bg-background">
+<div class="max-w-7xl mx-auto space-y-lg">
+<!-- Header / Title -->
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">AI Case Queue</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Review and action automated detections from rover fleet.</p>
+</div>
+<!-- Global Stats (Bento Grid Style) -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<!-- Stat Card 1 -->
+<div class="bg-surface rounded-xl p-md shadow-sm border border-outline-variant/20 flex flex-col justify-between hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-16 h-16 bg-primary/5 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-150"></div>
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider relative z-10">Total Farmers</span>
+<div class="mt-4 flex items-end justify-between relative z-10">
+<span class="font-display-lg text-display-lg text-on-surface">42</span>
+<div class="flex flex-col items-end">
+<svg class="mb-1" height="20" width="40"><path class="sparkline-up" d="M0 15 Q 10 5, 20 10 T 40 5"></path></svg>
+<span class="text-xs text-primary font-medium">+12%</span>
+</div>
+</div>
+</div>
+<!-- Stat Card 2 -->
+<div class="bg-surface rounded-xl p-md shadow-sm border border-outline-variant/20 flex flex-col justify-between hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-16 h-16 bg-primary/5 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-150"></div>
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider relative z-10">Active Fields</span>
+<div class="mt-4 flex items-end justify-between relative z-10">
+<span class="font-display-lg text-display-lg text-on-surface">15</span>
+<div class="flex flex-col items-end">
+<svg class="mb-1" height="20" width="40"><path class="sparkline-up" d="M0 10 Q 15 15, 25 5 T 40 2"></path></svg>
+<span class="text-xs text-primary font-medium">+3%</span>
+</div>
+</div>
+</div>
+<!-- Stat Card 3 (High Risk - Emphasized) -->
+<div class="bg-error-container rounded-xl p-md shadow-sm border border-error/20 flex flex-col justify-between hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-16 h-16 bg-error/5 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-150"></div>
+<div class="flex items-center gap-xs relative z-10">
+<span class="material-symbols-outlined text-error text-sm" data-icon="warning">warning</span>
+<span class="font-label-md text-label-md text-on-error-container uppercase tracking-wider font-bold">High-Risk Cases</span>
+</div>
+<div class="mt-4 flex items-end justify-between relative z-10">
+<span class="font-display-lg text-display-lg text-error font-bold">3</span>
+<div class="flex flex-col items-end">
+<svg class="mb-1" height="20" width="40"><path class="sparkline-down" d="M0 5 Q 10 15, 20 10 T 40 18"></path></svg>
+<span class="text-xs text-error font-medium">+2 today</span>
+</div>
+</div>
+</div>
+<!-- Stat Card 4 -->
+<div class="bg-surface rounded-xl p-md shadow-sm border border-outline-variant/20 flex flex-col justify-between hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-16 h-16 bg-primary/5 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-150"></div>
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider relative z-10">Pending Reviews</span>
+<div class="mt-4 flex items-end justify-between relative z-10">
+<span class="font-display-lg text-display-lg text-on-surface">8</span>
+</div>
+</div>
+</div>
+<!-- Main Layout Grid: Table (Left/Top) + Review Detail (Right/Bottom) -->
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-lg">
+<!-- AI Case Queue Table -->
+<div class="xl:col-span-2 bg-surface rounded-xl shadow-[0px_2px_8px_rgba(0,0,0,0.05)] border border-outline-variant/20 overflow-hidden flex flex-col">
+<div class="p-4 border-b border-outline-variant/30 flex justify-between items-center bg-surface-bright">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Requires Action</h3>
+<div class="flex gap-2">
+<button class="text-sm font-medium px-3 py-1 rounded bg-surface-variant text-on-surface-variant hover:bg-outline-variant/30 transition-colors">Filter</button>
+<button class="text-sm font-medium px-3 py-1 rounded bg-surface-variant text-on-surface-variant hover:bg-outline-variant/30 transition-colors">Sort</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left whitespace-nowrap border-collapse">
+<thead class="bg-surface-container-low font-label-md text-label-md text-on-surface-variant uppercase tracking-wider border-b border-outline-variant/30">
+<tr>
+<th class="px-4 py-3 font-semibold">Farmer Name</th>
+<th class="px-4 py-3 font-semibold">Field &amp; Crop</th>
+<th class="px-4 py-3 font-semibold">AI Finding</th>
+<th class="px-4 py-3 font-semibold text-right">Confidence</th>
+<th class="px-4 py-3 font-semibold text-center">Risk</th>
+<th class="px-4 py-3 font-semibold text-center">Status</th>
+<th class="px-4 py-3 font-semibold text-center">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/20 font-body-sm text-body-sm">
+<!-- Row 1 (Selected/Active State Example) -->
+<tr class="hover:bg-surface-variant/50 transition-colors bg-primary/5 cursor-pointer border-l-4 border-l-primary" onclick="alert('In a real app, this would load the case details on the right.')">
+<td class="px-4 py-3 text-on-surface font-medium flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-xs">RK</div>
+                                            Ramesh Kumar
+                                        </td>
+<td class="px-4 py-3">
+<div class="text-on-surface">Sector 4A</div>
+<div class="text-xs text-on-surface-variant">Wheat</div>
+</td>
+<td class="px-4 py-3 font-medium text-on-surface">Yellow Rust Suspected</td>
+<td class="px-4 py-3 text-right">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+                                                92%
+                                            </span>
+</td>
+<td class="px-4 py-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-error/10 text-error border border-error/20">
+                                                High
+                                            </span>
+</td>
+<td class="px-4 py-3 text-center">
+<span class="text-xs font-medium text-on-surface-variant italic">Reviewing</span>
+</td>
+<td class="px-4 py-3 text-center">
+<button class="text-primary hover:text-primary-container transition-colors">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-variant/50 transition-colors cursor-pointer border-l-4 border-l-transparent">
+<td class="px-4 py-3 text-on-surface font-medium flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-tertiary-container text-on-tertiary-container flex items-center justify-center font-bold text-xs">SP</div>
+                                            Sunita Patel
+                                        </td>
+<td class="px-4 py-3">
+<div class="text-on-surface">Block B</div>
+<div class="text-xs text-on-surface-variant">Cotton</div>
+</td>
+<td class="px-4 py-3 font-medium text-on-surface">Aphid Infestation</td>
+<td class="px-4 py-3 text-right">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+                                                88%
+                                            </span>
+</td>
+<td class="px-4 py-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-[#f59e0b]/10 text-[#d97706] border border-[#f59e0b]/20">
+                                                Med
+                                            </span>
+</td>
+<td class="px-4 py-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-surface-variant text-on-surface-variant">
+                                                New
+                                            </span>
+</td>
+<td class="px-4 py-3 text-center">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-variant/50 transition-colors cursor-pointer border-l-4 border-l-transparent">
+<td class="px-4 py-3 text-on-surface font-medium flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center font-bold text-xs">AS</div>
+                                            Amit Singh
+                                        </td>
+<td class="px-4 py-3">
+<div class="text-on-surface">North Ridge</div>
+<div class="text-xs text-on-surface-variant">Soybean</div>
+</td>
+<td class="px-4 py-3 font-medium text-on-surface">Nitrogen Deficiency</td>
+<td class="px-4 py-3 text-right">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-outline-variant text-on-surface-variant border border-outline-variant">
+                                                74%
+                                            </span>
+</td>
+<td class="px-4 py-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+                                                Low
+                                            </span>
+</td>
+<td class="px-4 py-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-surface-variant text-on-surface-variant">
+                                                New
+                                            </span>
+</td>
+<td class="px-4 py-3 text-center">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-4 border-t border-outline-variant/30 text-center bg-surface-bright">
+<button class="text-sm font-medium text-primary hover:underline transition-all">View All 8 Cases</button>
+</div>
+</div>
+<!-- Case Review Modal/Section (Right Side Panel) -->
+<div class="xl:col-span-1 bg-surface rounded-xl shadow-[0px_8px_24px_rgba(0,0,0,0.12)] border border-outline-variant/20 flex flex-col h-[700px] xl:h-auto overflow-hidden sticky top-4">
+<!-- Header -->
+<div class="p-4 border-b border-outline-variant/30 flex justify-between items-start bg-surface-container-lowest">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-error/10 text-error border border-error/20">High Risk</span>
+<span class="text-xs text-on-surface-variant">Case #8942</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">Yellow Rust Suspected</h3>
+<p class="text-sm text-on-surface-variant">Ramesh Kumar • Sector 4A (Wheat)</p>
+</div>
+<div class="w-10 h-10 rounded-full border border-primary/20 flex items-center justify-center bg-primary/5 text-primary font-bold">
+                                92%
+                            </div>
+</div>
+<!-- Scrollable Detail Body -->
+<div class="flex-1 overflow-y-auto p-4 space-y-6 bg-surface-container-lowest">
+<!-- AI Evidence Card (Image) -->
+<div class="rounded-lg overflow-hidden border border-outline-variant/30 relative">
+<!-- Base Image -->
+<img class="w-full h-48 object-cover" data-alt="A highly detailed close-up macro photograph of a wheat leaf showing signs of yellow rust disease, characterized by prominent yellow streaks and pustules along the veins. The lighting is bright, natural daylight highlighting the texture of the diseased leaf against a slightly blurred, dark earthy background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLbG-k5SIXfyyLSY-yVPZ2qbZv9NwL9Gf3qk8kVrr8yuSC8GSCmbhj6y6qkC7JGXaymnzREOSgNwHQVcjROA-0shsl1I9Mn6uvicTaoIsXIed1sOGuRnt5WSZP5kgi9bz5RRw5xoK7Bj6Uo6buhZpbf0HPtHrO1vQ2SgJZ67KEhaaBMXH9lccc9MgrO4Oqh0i16cDy5JxjzsB2bzTv6U7lV0Jk_9_iHVU3nncMPJ36WpLY9Caro3A-"/>
+<!-- AI Overlay Box -->
+<div class="absolute inset-0 pointer-events-none p-4">
+<div class="border-2 border-error w-1/3 h-1/2 absolute top-1/4 left-1/3 rounded-[4px] bg-error/10">
+<span class="absolute -top-6 left-[-2px] bg-error text-on-error text-[10px] px-1 py-0.5 font-bold uppercase tracking-wider rounded-sm">Detection: Rust</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-2 text-xs text-center text-on-surface-variant border-t border-outline-variant/30 flex justify-between items-center px-4">
+<span>Captured: Today, 08:14 AM</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]" data-icon="photo_camera">photo_camera</span> Rover Cam 2</span>
+</div>
+</div>
+<!-- Sensor Data -->
+<div>
+<h4 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-2">Micro-Climate Sensor Data</h4>
+<div class="grid grid-cols-2 gap-2">
+<div class="bg-surface-variant/30 p-2 rounded-md flex justify-between items-center border border-outline-variant/10">
+<span class="text-sm text-on-surface-variant">Humidity</span>
+<span class="text-sm font-bold text-on-surface">88% <span class="text-error">↑</span></span>
+</div>
+<div class="bg-surface-variant/30 p-2 rounded-md flex justify-between items-center border border-outline-variant/10">
+<span class="text-sm text-on-surface-variant">Temp</span>
+<span class="text-sm font-bold text-on-surface">18°C</span>
+</div>
+<div class="bg-surface-variant/30 p-2 rounded-md flex justify-between items-center border border-outline-variant/10">
+<span class="text-sm text-on-surface-variant">Soil Moist</span>
+<span class="text-sm font-bold text-on-surface">High</span>
+</div>
+<div class="bg-surface-variant/30 p-2 rounded-md flex justify-between items-center border border-outline-variant/10">
+<span class="text-sm text-on-surface-variant">Leaf Wetness</span>
+<span class="text-sm font-bold text-error">Critical</span>
+</div>
+</div>
+<p class="text-xs text-on-surface-variant mt-2 italic flex items-start gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="info">info</span>
+                                    Current conditions highly favorable for fungal spread.
+                                </p>
+</div>
+</div>
+<!-- Action Footer -->
+<div class="p-4 border-t border-outline-variant/30 bg-surface flex flex-col gap-3">
+<!-- Primary Action -->
+<button class="w-full bg-primary text-on-primary py-3 rounded-lg font-label-md text-label-md font-bold hover:bg-primary-container transition-all shadow-[0_2px_4px_rgba(0,0,0,0.1)] active:shadow-none active:translate-y-px flex justify-center items-center gap-2">
+<span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
+                                Accept AI Finding
+                            </button>
+<div class="flex gap-3">
+<!-- Secondary Action -->
+<button class="flex-1 bg-transparent border border-secondary text-secondary py-2 rounded-lg font-label-md text-label-md font-bold hover:bg-secondary/5 transition-colors flex justify-center items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="add_a_photo">add_a_photo</span>
+                                    More Evidence
+                                </button>
+<!-- Tertiary/Escalate Action -->
+<button class="flex-1 bg-transparent text-error hover:bg-error/5 py-2 rounded-lg font-label-md text-label-md font-bold transition-colors flex justify-center items-center gap-1 border border-transparent hover:border-error/20">
+<span class="material-symbols-outlined text-sm" data-icon="flag">flag</span>
+                                    Escalate (Krishi)
+                                </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom spacing -->
+<div class="h-8"></div>
+</div>
+</main>
+</body></html>

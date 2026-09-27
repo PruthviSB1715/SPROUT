@@ -1,0 +1,35 @@
+﻿# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Node.js
+node_modules/
+.next/
+dist/
+build/
+coverage/
+
+# IDE and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+temp/
+tmp/
+
+# Dataset and generated files
+datasets/
+data/raw/
